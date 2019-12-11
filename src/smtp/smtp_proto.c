@@ -466,7 +466,8 @@ int     smtp_helo(SMTP_STATE *state)
     if (smtp_mode) {
 	where = "performing the EHLO handshake";
 	if (session->features & SMTP_FEATURE_ESMTP) {
-	    smtp_chat_cmd(session, "EHLO %s", var_smtp_helo_name);
+		msg_info("var_smtp_helo_name: %s", var_smtp_helo_name);
+	    smtp_chat_cmd(session, "EHLO %s logid:%s", var_smtp_helo_name, state->request->queue_id);
 	    if ((resp = smtp_chat_resp(session))->code / 100 != 2) {
 		if (resp->code == 421)
 		    return (smtp_site_fail(state, STR(iter->host), resp,
@@ -479,7 +480,7 @@ int     smtp_helo(SMTP_STATE *state)
 	}
 	if ((session->features & SMTP_FEATURE_ESMTP) == 0) {
 	    where = "performing the HELO handshake";
-	    smtp_chat_cmd(session, "HELO %s", var_smtp_helo_name);
+	    smtp_chat_cmd(session, "HELO %s logid:%s", var_smtp_helo_name, state->request->queue_id);
 	    if ((resp = smtp_chat_resp(session))->code / 100 != 2)
 		return (smtp_site_fail(state, STR(iter->host), resp,
 				       "host %s refused to talk to me: %s",
@@ -488,7 +489,7 @@ int     smtp_helo(SMTP_STATE *state)
 	}
     } else {
 	where = "performing the LHLO handshake";
-	smtp_chat_cmd(session, "LHLO %s", var_smtp_helo_name);
+	smtp_chat_cmd(session, "LHLO %s logid:%s", var_smtp_helo_name, state->request->queue_id);
 	if ((resp = smtp_chat_resp(session))->code / 100 != 2)
 	    return (smtp_site_fail(state, STR(iter->host), resp,
 				   "host %s refused to talk to me: %s",
