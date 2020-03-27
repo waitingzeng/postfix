@@ -174,7 +174,7 @@
  /*
   * Default is verbose logging off.
   */
-int     msg_verbose = 1;
+int     msg_verbose = 0;
 
  /*
   * Private state.
